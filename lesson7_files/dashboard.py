@@ -7,6 +7,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
+import calendar
 import warnings
 
 from data_loader import EcommerceDataLoader, load_and_process_data
@@ -379,16 +380,18 @@ def main():
     available_years = sorted(orders_data['purchase_year'].unique(), reverse=True)
 
     with hdr_year:
-        default_idx = available_years.index(2023) if 2023 in available_years else 0
-        selected_year = st.selectbox("Select Year", available_years,
+        default_idx = (available_years.index(2023)
+                       if 2023 in available_years else 0)
+        selected_year = st.selectbox("Year", available_years,
                                      index=default_idx, key="year_filter")
 
     with hdr_month:
-        month_opts = ['All Months'] + [f'Month {i}' for i in range(1, 13)]
-        month_display = st.selectbox("Select Month", month_opts,
+        month_names = [calendar.month_name[i] for i in range(1, 13)]
+        month_opts = ['All Months'] + month_names
+        month_display = st.selectbox("Month", month_opts,
                                      index=0, key="month_filter")
         selected_month = (None if month_display == 'All Months'
-                          else int(month_display.split(' ')[1]))
+                          else month_opts.index(month_display))
 
     # -----------------------------------------------------------------------
     # Build datasets
@@ -429,7 +432,6 @@ def main():
     # -----------------------------------------------------------------------
     # KPI row — 4 cards
     # -----------------------------------------------------------------------
-    st.markdown("### Key Performance Indicators")
     k1, k2, k3, k4 = st.columns(4)
 
     with k1:
@@ -466,12 +468,9 @@ def main():
             <p class="metric-trend">{format_trend(total_orders, prev_orders)}</p>
         </div>""", unsafe_allow_html=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
-
     # -----------------------------------------------------------------------
     # Charts grid — 2 x 2
     # -----------------------------------------------------------------------
-    st.markdown("### Performance Analytics")
     r1c1, r1c2 = st.columns(2)
     r2c1, r2c2 = st.columns(2)
 
@@ -490,12 +489,9 @@ def main():
         st.plotly_chart(create_satisfaction_delivery_chart(current_data),
                         use_container_width=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
-
     # -----------------------------------------------------------------------
     # Bottom row — 2 cards
     # -----------------------------------------------------------------------
-    st.markdown("### Customer Experience Metrics")
     b1, b2 = st.columns(2)
 
     with b1:
