@@ -42,13 +42,15 @@ class EcommerceDataLoader:
             'payments': 'order_payments_dataset.csv'
         }
         
+        load_summary = {}
         for key, filename in file_mappings.items():
             try:
                 self.raw_data[key] = pd.read_csv(f"{self.data_path}{filename}")
-                print(f"Loaded {key}: {len(self.raw_data[key])} records")
+                load_summary[key] = {'records': len(self.raw_data[key]), 'status': 'loaded'}
             except FileNotFoundError:
-                print(f"Warning: {filename} not found, skipping...")
-        
+                load_summary[key] = {'records': 0, 'status': 'not_found'}
+
+        self.load_summary = load_summary
         return self.raw_data
     
     def clean_orders_data(self) -> pd.DataFrame:

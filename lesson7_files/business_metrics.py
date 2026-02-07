@@ -258,13 +258,13 @@ class MetricsVisualizer:
     def __init__(self, report_data: Dict[str, any]):
         """
         Initialize the visualizer.
-        
+
         Args:
             report_data (Dict): Business metrics report data
         """
         self.report_data = report_data
-        self.color_palette = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', 
-                             '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
+        self.color_palette = ['#1f77b4', '#4a90d9', '#7baaf0', '#a8c8f0', '#d0e1f9',
+                             '#2c5f8a', '#3a7cc2', '#5a9bd5', '#8fb8e8', '#b3d1f2']
     
     def plot_revenue_trend(self, figsize: Tuple[int, int] = (12, 6)) -> plt.Figure:
         """
@@ -278,25 +278,30 @@ class MetricsVisualizer:
         """
         monthly_data = self.report_data['monthly_trends']
         year = self.report_data['analysis_period']
-        
+
+        months = monthly_data['month']
+        date_range = f"Jan-Dec {year}" if len(months) > 1 else f"Month {months.iloc[0]}, {year}"
+
         fig, ax = plt.subplots(figsize=figsize)
-        
-        ax.plot(monthly_data['month'], monthly_data['revenue'], 
-                marker='o', linewidth=2, markersize=8, color=self.color_palette[0])
-        
-        ax.set_title(f'Monthly Revenue Trend - {year}', fontsize=16, fontweight='bold', pad=20)
+
+        ax.plot(monthly_data['month'], monthly_data['revenue'],
+                marker='o', linewidth=2, markersize=8, color=self.color_palette[0],
+                label=f'Monthly Revenue ({year})')
+
+        ax.set_title(f'Monthly Revenue Trend ({date_range})', fontsize=16, fontweight='bold', pad=20)
         ax.set_xlabel('Month', fontsize=12)
-        ax.set_ylabel('Revenue ($)', fontsize=12)
+        ax.set_ylabel('Revenue (USD)', fontsize=12)
         ax.grid(True, alpha=0.3)
-        
+        ax.legend(fontsize=10)
+
         # Format y-axis as currency
         ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'${x:,.0f}'))
-        
+
         # Add data labels
         for i, v in enumerate(monthly_data['revenue']):
-            ax.annotate(f'${v:,.0f}', (monthly_data['month'].iloc[i], v), 
+            ax.annotate(f'${v:,.0f}', (monthly_data['month'].iloc[i], v),
                        textcoords="offset points", xytext=(0,10), ha='center', fontsize=9)
-        
+
         plt.tight_layout()
         return fig
     
@@ -320,25 +325,29 @@ class MetricsVisualizer:
         
         category_data = self.report_data['product_performance']['top_categories'].head(top_n)
         year = self.report_data['analysis_period']
-        
+
         fig, ax = plt.subplots(figsize=figsize)
-        
+
+        # Blue gradient for bars
+        n_bars = len(category_data)
+        colors = [self.color_palette[i % len(self.color_palette)] for i in range(n_bars)]
+
         bars = ax.barh(category_data['product_category_name'], category_data['total_revenue'],
-                      color=self.color_palette[1])
-        
-        ax.set_title(f'Top {top_n} Product Categories by Revenue - {year}', 
+                      color=colors)
+
+        ax.set_title(f'Top {top_n} Product Categories by Revenue ({year})',
                     fontsize=16, fontweight='bold', pad=20)
-        ax.set_xlabel('Revenue ($)', fontsize=12)
+        ax.set_xlabel('Revenue (USD)', fontsize=12)
         ax.set_ylabel('Product Category', fontsize=12)
-        
+
         # Format x-axis as currency
         ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'${x:,.0f}'))
-        
+
         # Add data labels
         for i, v in enumerate(category_data['total_revenue']):
-            ax.text(v, i, f'${v:,.0f}', va='center', ha='left', fontsize=10, 
+            ax.text(v, i, f'${v:,.0f}', va='center', ha='left', fontsize=10,
                    bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.7))
-        
+
         plt.tight_layout()
         return fig
     
@@ -364,11 +373,11 @@ class MetricsVisualizer:
             color='revenue',
             locationmode='USA-states',
             scope='usa',
-            title=f'Revenue by State - {year}',
+            title=f'Revenue by State ({year})',
             color_continuous_scale='Blues',
-            labels={'revenue': 'Revenue ($)'}
+            labels={'revenue': 'Revenue (USD)'}
         )
-        
+
         fig.update_layout(
             title_font_size=16,
             title_x=0.5,
@@ -405,19 +414,20 @@ class MetricsVisualizer:
         values = [satisfaction_metrics['score_5_percentage'],
                  satisfaction_metrics['score_4_plus_percentage'],
                  satisfaction_metrics['score_1_2_percentage']]
-        colors = ['#2ca02c', '#1f77b4', '#d62728']
-        
+        colors = ['#1f77b4', '#4a90d9', '#7baaf0']
+
         bars = ax.bar(metrics, values, color=colors)
-        
-        ax.set_title(f'Customer Satisfaction Metrics - {year}', 
+
+        ax.set_title(f'Customer Satisfaction Metrics ({year})',
                     fontsize=16, fontweight='bold', pad=20)
         ax.set_ylabel('Percentage (%)', fontsize=12)
-        
+        ax.set_xlabel('Review Score Category', fontsize=12)
+
         # Add data labels
         for bar, value in zip(bars, values):
             ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 1,
                    f'{value:.1f}%', ha='center', va='bottom', fontsize=11)
-        
+
         plt.tight_layout()
         return fig
 
@@ -459,7 +469,7 @@ def print_metrics_summary(report: Dict[str, any]) -> None:
         satisfaction = report['customer_satisfaction']
         print(f"\nCUSTOMER SATISFACTION:")
         print(f"  Average Review Score: {satisfaction['avg_review_score']:.2f}/5.0")
-        print(f"  High Satisfaction (4+): {format_percentage(satisfaction['score_4_plus_percentage'])}")
+        print(f"  Score 4+ Reviews: {format_percentage(satisfaction['score_4_plus_percentage'])}")
     
     # Delivery performance
     if 'error' not in report['delivery_performance']:

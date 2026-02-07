@@ -21,7 +21,7 @@ warnings.filterwarnings('ignore')
 # Page configuration
 st.set_page_config(
     page_title="E-commerce Analytics Dashboard",
-    page_icon="📊",
+    page_icon=None,
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -341,7 +341,7 @@ def main():
     col1, col2, col3 = st.columns([2, 1, 1])
     
     with col1:
-        st.title("📊 E-commerce Analytics Dashboard")
+        st.title("E-commerce Analytics Dashboard")
     
     with col2:
         # Get available years from data
