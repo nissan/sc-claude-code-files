@@ -86,8 +86,13 @@ st.markdown("""
         font-size: 1.2rem;
     }
 
-    .stSelectbox > div > div > div {
+    .stSelectbox [data-baseweb="select"] {
         background-color: white;
+        color: #1f1f1f;
+    }
+
+    .stSelectbox [data-baseweb="select"] * {
+        color: #1f1f1f !important;
     }
 </style>
 """, unsafe_allow_html=True)
