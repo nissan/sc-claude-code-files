@@ -9,7 +9,7 @@ This project transforms a basic exploratory data analysis into a professional, m
 - **Configurable Analysis**: Easily analyze any time period or compare different years
 - **Modular Architecture**: Reusable data loading and metrics calculation modules
 - **Professional Visualizations**: Business-oriented charts with proper formatting
-- **Strategic Insights**: Automated generation of business recommendations
+- **Data-driven Observations**: Factual summaries for further investigation
 
 ## Project Structure
 
@@ -51,10 +51,10 @@ data_analysis/
 - Customer satisfaction distributions
 - Consistent color schemes and formatting
 
-### 4. Automated Insights
-- Strategic recommendations based on data patterns
-- Performance benchmarking and alerts
+### 4. Factual Observations
+- Data-driven observations surfaced from the analysis
 - Executive summary generation
+- No assumed business thresholds -- reader draws conclusions
 
 ## Installation and Setup
 
@@ -221,7 +221,7 @@ REVENUE PERFORMANCE:
 
 CUSTOMER SATISFACTION:
   Average Review Score: 4.10/5.0
-  High Satisfaction (4+): 84.2%
+  Score 4+ Reviews: 84.2%
 
 DELIVERY PERFORMANCE:
   Average Delivery Time: 8.0 days
